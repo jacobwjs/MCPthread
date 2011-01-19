@@ -17,11 +17,13 @@ Photon::Photon(void)
 	status = ALIVE;
 
 	// starting at the surface of the medium.
-	x = y = z = 0;
+	x = 0;
+	y = 0;
+	z = 0;
 
 	// Randomly set photon trajectory upon creation to yield isotropic source.
 	cos_theta = 2.0 * getRandNum() - 1.0;
-	sin_theta = sqrt(1.0 - cos_theta*cos_theta);	// sin_theta is always positive.
+	sin_theta = sqrt(1.0 - cos_theta * cos_theta);	// sin_theta is always positive.
 	psi = 2.0*PI*getRandNum();
 	
 	// By setting all directions except 'z' to zero we are simulating a collimated beam.
@@ -39,8 +41,8 @@ Photon::Photon(void)
 Photon::Photon(double x, double y, double z,
 		double dirx, double diry, double dirz)
 {
-	this->iterations = 0;
-	this->status = ALIVE;
+	iterations = 0;
+	status = ALIVE;
 	this->x = x;
 	this->y = y;
 	this->z = z;
@@ -49,11 +51,11 @@ Photon::Photon(double x, double y, double z,
 	this->diry = diry;
 	this->dirz = dirz;
 
-	this->cos_theta = 2.0*getRandNum() - 1.0;
-	this->sin_theta = sqrt(1.0 - cos_theta*cos_theta);
-	this->psi = 2.0*PI*getRandNum();
+	cos_theta = 2.0*getRandNum() - 1.0;
+	sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+	psi = 2.0*PI*getRandNum();
 
-	this->weight = 1;
+	weight = 1;
 	step = 0;
 }
 
@@ -65,28 +67,35 @@ Photon::~Photon(void)
 }
 
 
-void Photon::setIterations(const int n)
+void Photon::setIterations(const int num)
 {
-	iterations = n;
+	iterations = num;
 }
 
 void Photon::run()
 {
 	int cnt = 0;
 	
+	// Execute this photon (i.e. thread) the given number of iterations, thus
+	// allowing the work to be split up.
 	while (cnt < iterations) {
-		while (this->isAlive()) {
+		
+		while (isAlive()) {
 #ifdef DEBUG
 			cout << "Running thread( " << Thread::getThreadID() << ")...";
-			cout << "..hop(), drop(), spin()\n";
+			cout << "..hop(), drop(), spin().  Propogated " << cnt << " times.\n";
 #endif
 			hop();
 			drop();
 			spin();
 		}
+		
 		cnt++;
 		reset();
 	}
+	
+	// The thread has done its portion of the work, time to exit.
+	//Thread::exit();
 }
 
 void Photon::reset()
@@ -154,11 +163,17 @@ void Photon::spin()
 	double g = l->getAnisotropy();
 	double rnd = getRandNum();
 	if (g == 0.0) {
-		cos_theta = 2.0*rnd - 1.0;
+		cos_theta = (2.0*rnd) - 1.0;
 	}
 	else {
 		double temp = (1.0 - g*g)/(1.0 - g + 2*g*rnd);
 		cos_theta = (1.0 + g*g - temp*temp)/(2.0*g);
+		
+		// Sanity check 
+		if (cos_theta < -1)
+			cos_theta = -1;
+		else if (cos_theta > 1)
+			cos_theta = 1;
 	}
 	sin_theta = sqrt(1.0 - cos_theta*cos_theta);	// sqrt() is faster
 													// than sin().
@@ -172,13 +187,13 @@ void Photon::updateTrajectory(void)
 {
 	// Sample psi.
 	// ------------------------
-	psi = 2.0*PI*getRandNum();
+	psi = 2.0 * PI * getRandNum();
 	double cos_psi = cos(psi);
 	double sin_psi;
 	if (psi < PI)
-		sin_psi = sqrt(1.0 - cos_psi*cos_psi);	// sqrt() is faster than sin().
+		sin_psi = sqrt(1.0 - cos_psi * cos_psi);	// sqrt() is faster than sin().
 	else
-		sin_psi = -sqrt(1.0 - cos_psi*cos_psi);
+		sin_psi = -sqrt(1.0 - cos_psi * cos_psi);
 		
 	// Calculate new trajectory.
 	// ----------------------------

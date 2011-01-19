@@ -20,6 +20,9 @@ public:
 	// Join the thread.
 	void join();
 	
+	// Exit the thread.
+	void exit();
+	
 	// Where all the magic happens.
 	virtual void run() = 0;
 	

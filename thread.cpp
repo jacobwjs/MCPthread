@@ -45,6 +45,13 @@ void Thread::join()
 	pthread_join(t_id, NULL);
 }
 
+
+void Thread::exit()
+{
+	pthread_exit((void *) 0);
+}
+
+
 void *Thread::exec(void *t)
 {
 #ifdef DEBUG

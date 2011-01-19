@@ -1,3 +1,20 @@
+/*
+ * Copyright BMPI 2010
+ * J.W. Staley - MIRA, Biomedical Photonics Imaging Group (BMPI), University of Twente
+ *
+ */
+
+/* TO DO:
+ * ------
+ * - Set default thread stack size
+ * - Decide if detached or joinable state is best.
+ * - Update printGrid to calculate fluences based on layers. 
+ */
+
+
+
+
+
 #include "stdio.h"
 #include "photon.h"
 #include "medium.h"
@@ -5,12 +22,13 @@
 #include <time.h>
 #include <iostream>
 #include <vector>
+
 using namespace std;
 
-const int MAX_THREADS = 30;
-const int MAX_PHOTONS = 50000;
+const int MAX_THREADS = 20;
+const int MAX_PHOTONS = 100000;
 
-#define DEBUG 1
+//#define DEBUG 1
 
 int main()
 {
@@ -51,7 +69,7 @@ int main()
 	for (currPhoton = photons.begin(); currPhoton != photons.end(); ++currPhoton) {
 		currPhoton->join();
 	}
-	
+		
 	/*
 	time(&end);
 	duration = difftime(end, start);         // time in milliseconds
@@ -60,12 +78,21 @@ int main()
 	
 	end = ((double)clock() - start) / CLOCKS_PER_SEC;
 	cout << "Time elapsed: " << end << endl;
-	
-//#ifdef DEBUG
-	Medium *p = &tissue;
-	p->printGrid();
-//#endif
 
+	
+	
+	
+	
+	Medium *ptrMedium = &tissue;
+	ptrMedium->printGrid(MAX_PHOTONS, tissue.getAbsorpCoeff());
+	/*
+#ifdef DEBUG
+	ptrMedium->printGrid();
+#endif
+	 */
+	
+	
+	
 				
 
 	return 0;
