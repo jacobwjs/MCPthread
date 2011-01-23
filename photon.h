@@ -2,7 +2,7 @@
 #ifndef PHOTON_H
 #define PHOTON_H
 
-#include "layer.h"
+#include "medium.h"
 #include "thread.h"
 #include <cmath>
 #include <ctime>
@@ -15,14 +15,15 @@
 /* If 1-cos(theta) <= ONE_MINUS_COSZERO, fabs(theta) <= 1e-6 rad. */
 /* If 1+cos(theta) <= ONE_MINUS_COSZERO, fabs(PI-theta) <= 1e-6 rad. */
 
-#define THRESHOLD	0.1			// Threshold for determining if we should perform roulette
+#define THRESHOLD	0.01		// Threshold for determining if we should perform roulette
 #define CHANCE      0.1  		// Used in roulette
+#define PI			3.141592
 
+#define SIGN(x)           ((x)>=0 ? 1:-1)
 
 class Photon : public Thread
 {
 public:
-	const static double PI = 3.141592;
 	Photon(void);
 	Photon(double x, double y, double z,
 		   double dirx, double diry, double dirz);
@@ -48,10 +49,14 @@ public:
 	void	reset();
 	
 	// Set the layer for this photon.
-	void	setLayer(Layer *l) {this->l = l;}
+	//void	setLayer(Medium *tissue) {this->medium = tissue;}
+	
+	// Set the medium which the photon will propogate through.
+	// NOTE: can be made up of multiple layers.
+	void	setMedium(Medium *tissue) {this->medium = tissue;}
 
 	// Update direction coordinates.
-	void	updateTrajectory(void);
+	//void	updateTrajectory(void);
 	
 	// Give the photon a probabilistic chance of surviving or terminating
 	// if its weight has dropped below a specified threshold.
@@ -96,8 +101,14 @@ private:
 	// Number of times this Photon (i.e., thread) will execute.
 	int iterations;
 	
+	// Holds value of number of iterations thus far.
+	int cnt;	
+	
 	// Location of the photon.
-	double	x, y, z, r;
+	double	x, y, z;
+	
+	// Radial position.
+	double r;
 	
 	// Direction of the photon.
 	double	dirx, diry, dirz;
@@ -117,8 +128,8 @@ private:
 	// The azimuthal angle
 	double	psi;	
 	
-	// The layer that the photon will be propogated through.
-	Layer *l;
+	// The Medium that the photon will be propogated through.
+	Medium *medium;
 	
 }; 		
 

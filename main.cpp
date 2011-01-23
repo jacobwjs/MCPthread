@@ -1,6 +1,8 @@
 /*
  * Copyright BMPI 2010
- * J.W. Staley - MIRA, Biomedical Photonics Imaging Group (BMPI), University of Twente
+ * J.W. Staley - MIRA, 
+ *               Biomedical Photonics Imaging Group (BMPI), 
+ *				 University of Twente
  *
  */
 
@@ -25,8 +27,8 @@
 
 using namespace std;
 
-const int MAX_THREADS = 20;
-const int MAX_PHOTONS = 100000;
+const int MAX_THREADS = 2;
+const int MAX_PHOTONS = 1000000;
 
 //#define DEBUG 1
 
@@ -36,18 +38,16 @@ int main()
 	// Each Photon inherits a Thread object.
 	vector<Photon> photons(MAX_THREADS);
 	vector<Photon>::iterator currPhoton;
-	 
-
-	// Create the medium in which the photons will be fired.
-	Layer tissue;
-
-
-	/*
-	time_t start, end;
-	double duration = 0;
-	time(&start);
-	*/
 	
+	
+	// Create the medium in which the photons will be fired.
+	Medium *tissue = new Medium();
+	// Add the layer to the medium.  NOTE:  destruction of the 'Layer' object is
+	// handled in the 'tissue' object.
+	tissue->addLayer(new Layer());
+	
+	
+	// Capture the time before launching photons into the medium.
 	clock_t start, end;
 	start = clock();
 	
@@ -55,7 +55,7 @@ int main()
 	// execution.
 	for (currPhoton = photons.begin(); currPhoton != photons.end(); ++currPhoton) {
 		// Set the layer the current Photon will be propogated through.
-		currPhoton->setLayer(&tissue);	
+		currPhoton->setMedium(tissue);	
 		
 		// In order to extract the highest level of concurrency we set each thread
 		// (i.e., Photon) to be executed a number of times that evenly distributes
@@ -69,31 +69,19 @@ int main()
 	for (currPhoton = photons.begin(); currPhoton != photons.end(); ++currPhoton) {
 		currPhoton->join();
 	}
-		
-	/*
-	time(&end);
-	duration = difftime(end, start);         // time in milliseconds
-	cout << "Execution time: " << duration << endl << endl;
-	 */
 	
+	// Print out the elapsed time it took from beginning to end.
 	end = ((double)clock() - start) / CLOCKS_PER_SEC;
 	cout << "Time elapsed: " << end << endl;
-
 	
 	
 	
 	
-	Medium *ptrMedium = &tissue;
-	ptrMedium->printGrid(MAX_PHOTONS, tissue.getAbsorpCoeff());
-	/*
-#ifdef DEBUG
-	ptrMedium->printGrid();
-#endif
-	 */
+	// Print the matrix of the photon absorptions to file.
+	//Medium *ptrMedium = &tissue;
+	tissue->printGrid(MAX_PHOTONS);
+	delete tissue;
 	
 	
-	
-				
-
 	return 0;
 }

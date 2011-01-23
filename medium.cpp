@@ -1,11 +1,11 @@
 #include "debug.h"
 #include "medium.h"
-
+#include <cmath>
 
 Medium::Medium()
 {
-	radial_size = 3.0;
-	num_radial_pos = MAX_BINS-1;
+	radial_size = 3.0;	// Total range in which bins are extended (cm).
+	num_radial_pos = MAX_BINS-1;	// Set the number of bins.
 	radial_bin_size = radial_size / num_radial_pos;
 	
 	// Initialize all the bins to zero since they will serve as accumulators.
@@ -23,42 +23,50 @@ Medium::~Medium()
 {
 	if (p_mutex != NULL)
 		delete(p_mutex);
+	
+	// Free the memory for layers that were added to the medium.
+	for (vector<Layer *>::iterator i = p_layers.begin(); i != p_layers.end(); ++i)
+		delete *i;
+}
+
+// Add the layer to the medium by pushing it onto the STL vector container.
+void Medium::addLayer(Layer *layer)
+{
+	p_layers.push_back(layer);
 }
 
 
-void Medium::absorbEnergy(double r, double energy)
+void Medium::absorbEnergy(const double z, const double energy)
 {
-	int index = (int)(r/radial_bin_size);
-	if (index >= num_radial_pos)
-		index = num_radial_pos;		// Last bin is for overflow.
 #ifdef DEBUG
 	cout << "Updating bin...\n";
 #endif
 	
+	double r = fabs(z);
+	short ir = (short)(r/radial_bin_size);
+	if (ir >= num_radial_pos) ir = num_radial_pos;
+
+	
 	// Lock access, eliminating any race conditions between photons trying to
 	// deposit energy.
 	p_mutex->Lock();
-	Cplanar[index] += energy;
+	Cplanar[ir] += energy;
 	p_mutex->UnLock();
 }
 
 
-void Medium::printGrid(const int numPhotons, const int mu_a)
+void Medium::printGrid(const int numPhotons)
 {
-	/*
-	cout << " ";
-	for (int i = 0; i < MAX_BINS; i++) {
-		if ((i%10)== 0) cout << endl;
-		cout << Cplanar[i] << " ";
-	}
-	 */
 	
 	// Open the file we will write to.
 	ofstream output;
 	output.open("fluences.txt");
-	//output << "r [cm] \t Fsph [1/cm2] \t Fcyl [1/cm2] \t Fpla [1/cm2]\n";
-	output << "r [cm] \t Fplanar[1/cm^2]\n";
 	
+	// Print the header information to the file.
+	//output << "r [cm] \t Fsph [1/cm2] \t Fcyl [1/cm2] \t Fpla [1/cm2]\n";
+	//output << "r [cm] \t Fplanar[1/cm^2]\n";
+	
+	double mu_a = p_layers[0]->getAbsorpCoeff();
 	double fluencePlanar = 0;
 	double r = 0;
 	double shellVolume = 0;
@@ -67,9 +75,15 @@ void Medium::printGrid(const int numPhotons, const int mu_a)
 		r = (ir + 0.5)*radial_bin_size;
 		shellVolume = radial_bin_size;
 		fluencePlanar = Cplanar[ir]/numPhotons/shellVolume/mu_a;
-		output << setprecision(4) << r << "\t" << fluencePlanar << "\n";
+		
+		// Print to file with the value for 'r' in fixed notation and having a
+		// precision of 5 decimal places, followed by the fluence in scientific
+		// notation with a precision of 3 decimal places.
+		output << fixed << setprecision(5) << r << "\t \t";
+		output << scientific << setprecision(3) <<  fluencePlanar << "\n";
 	}
 	
+	// close the file.
 	output.close();
 	
 	

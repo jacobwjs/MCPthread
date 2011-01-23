@@ -1,3 +1,4 @@
 *.o
 mcmlpthread
-MCAO
+MC-AO
+fluences.txt
