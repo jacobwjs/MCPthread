@@ -66,7 +66,7 @@ void Photon::run()
 		while (isAlive()) {
 #ifdef DEBUG
 			cout << "Running thread( " << Thread::getThreadID() << ")...";
-			cout << "..hop(), drop(), spin().  Propogated " << cnt << " times.\n";
+			cout << "..hop(), drop(), spin(), roulette().  Propogated " << cnt << " times.\n";
 #endif
 			hop();
 			drop();
@@ -205,19 +205,9 @@ void Photon::spin()
 	dirx = uxx;
 	diry = uyy;
 	dirz = uzz;
-	
-	
-	
 }
 
-/*
-void Photon::updateTrajectory(void)
-{
-	// Check if we need to perform roulette
-	if (weight < THRESHOLD)
-		performRoulette();
-}
-*/
+
 
 void Photon::performRoulette(void)
 {
@@ -244,6 +234,7 @@ double Photon::getRandNum(void)
 }
 
 
+// FIXME: Currently not in use
 void Photon::specularReflectance(double n1, double n2)
 {
 	// update the weight after specular reflectance has occurred.

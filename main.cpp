@@ -9,11 +9,8 @@
 /* TO DO:
  * ------
  * - Set default thread stack size
- * - Decide if detached or joinable state is best.
  * - Update printGrid to calculate fluences based on layers. 
  */
-
-
 
 
 
@@ -27,8 +24,8 @@
 
 using namespace std;
 
-const int MAX_THREADS = 2;
-const int MAX_PHOTONS = 1000000;
+const int MAX_THREADS = 11;
+const int MAX_PHOTONS = 50000000;
 
 //#define DEBUG 1
 

@@ -1,4 +1,7 @@
+.project
+.cproject
 *.o
 mcmlpthread
 MC-AO
 fluences.txt
+octave-core

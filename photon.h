@@ -6,7 +6,7 @@
 #include "thread.h"
 #include <cmath>
 #include <ctime>
-
+#include <cstdlib>
 
 #define ALIVE 1		// Value depicting Photon should continue propagation.
 #define DEAD  0	    // Photon has lost all energy and failed roulette.
@@ -54,9 +54,6 @@ public:
 	// Set the medium which the photon will propogate through.
 	// NOTE: can be made up of multiple layers.
 	void	setMedium(Medium *tissue) {this->medium = tissue;}
-
-	// Update direction coordinates.
-	//void	updateTrajectory(void);
 	
 	// Give the photon a probabilistic chance of surviving or terminating
 	// if its weight has dropped below a specified threshold.

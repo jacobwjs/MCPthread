@@ -30,4 +30,4 @@ public:
 	void setBoundaryEnergy(double photon_weight) {boundary_energy += photon_weight;}
 };
 
-#endif BOUNDARY_H
+#endif //BOUNDARY_H

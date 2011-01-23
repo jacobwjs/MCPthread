@@ -5,6 +5,7 @@
  */
 #include "debug.h"
 #include "thread.h"
+#include <cstring>
 
 
 void *execThread(void *arg);
