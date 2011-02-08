@@ -70,9 +70,16 @@ void Photon::run()
 			cout << "..hop(), drop(), spin(), roulette().  Propogated " << cnt << " times.\n";
 #endif
 			hop();
-			drop();
-			spin();
-			performRoulette();
+			// If the photon has left the medium, it should die.
+			if (z > 0) {
+				drop();
+				spin();
+				performRoulette();
+			}
+			else {
+				break;
+			}
+			
 		}
 		
 		cnt++;
@@ -118,9 +125,7 @@ void Photon::hop()
 	double rnd = getRandNum();
 	if (rnd <= 0 || rnd > 1)	cout << "Error in random number\n";
 	
-	cout << "Before\n";
 	Layer *layer = medium->getLayerFromDepth(z);
-	cout << "After\n";
 
 	double mu_a = layer->getAbsorpCoeff();  // cm^-1
 	double mu_s = layer->getScatterCoeff(); // cm^-1
@@ -131,6 +136,12 @@ void Photon::hop()
 	x += step*dirx;
 	y += step*diry;
 	z += step*dirz;
+
+#ifdef DEBUG
+	if (z < 0) {
+		cout << "Out of medium\n";
+	}
+#endif
 	
 }
 

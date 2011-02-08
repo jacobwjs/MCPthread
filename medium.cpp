@@ -59,7 +59,6 @@ void Medium::absorbEnergy(const double z, const double energy)
 // When the correct layer is found from the depth we return the layer object.
 Layer * Medium::getLayerFromDepth(double z)
 {
-
 	vector<Layer *>::iterator it;
 	for (it = p_layers.begin(); it != p_layers.end(); it++) {
 		// Find the layer we are it in the medium based on the depth (i.e. z)
