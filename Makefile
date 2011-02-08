@@ -16,8 +16,12 @@ OBJS = main.o thread.o photon.o mutex.o layer.o boundary.o medium.o
 all : mcmlpthread 
 
 
+debug: $(OBJS)
+	$(CC) -g -o $@ $(OBJS) $(CFLAGS) $(LIBS)
+
 mcmlpthread: $(OBJS)
-	 $(CC) -O3 -o  $@ $(OBJS) $(CFLAGS) $(LIBS)
+	 $(CC)  -o  $@ $(OBJS) $(CFLAGS) $(LIBS)
+
 
 
 clean::

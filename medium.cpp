@@ -54,6 +54,69 @@ void Medium::absorbEnergy(const double z, const double energy)
 	p_mutex->UnLock();
 }
 
+// Return the layer in the medium at the passed in depth 'z'.
+// We iterate through the vector which contains pointers to the layers.
+// When the correct layer is found from the depth we return the layer object.
+Layer * Medium::getLayerFromDepth(double z)
+{
+
+	vector<Layer *>::iterator it;
+	for (it = p_layers.begin(); it != p_layers.end(); it++) {
+		// Find the layer we are it in the medium based on the depth (i.e. z)
+		// that was passed in.  Break from the loop when we find the correct layer.
+		if ((*it)->getDepthStart() <= z && (*it)->getDepthEnd() >= z)
+			break;
+	}
+
+	// Return layer based on the depth passed in.
+	return *it;
+}
+
+
+double Medium::getLayerAbsorption(double z)
+{
+
+	vector<Layer *>::iterator it;
+	for (it = p_layers.begin(); it != p_layers.end(); it++) {
+		// Find the layer we are it in the medium based on the depth (i.e. z)
+		// that was passed in.  Break from the loop when we find the correct layer.
+		if ((*it)->getDepthStart() <= z && (*it)->getDepthEnd() >= z)
+			break;
+	}
+	// Return the absorption coefficient for the layer that resides at depth 'z'.
+	return (*it)->getAbsorpCoeff();
+}
+
+
+double Medium::getLayerScatter(double z)
+{
+
+	vector<Layer *>::iterator it;
+	for (it = p_layers.begin(); it != p_layers.end(); it++) {
+		// Find the layer we are it in the medium based on the depth (i.e. z)
+		// that was passed in.  Break from the loop when we find the correct layer.
+		if ((*it)->getDepthStart() <= z && (*it)->getDepthEnd() >= z)
+			break;
+	}
+	// Return the scattering coefficient for the layer that resides at depth 'z'.
+	return (*it)->getScatterCoeff();
+}
+
+
+double Medium::getAnisotropyFromDepth(double z)
+{
+	vector<Layer *>::iterator it;
+	for (it = p_layers.begin(); it != p_layers.end(); it++) {
+		// Find the layer we are it in the medium based on the depth (i.e. z)
+		// that was passed in.  Break from the loop when we find the correct layer.
+		if ((*it)->getDepthStart() <= z && (*it)->getDepthEnd() >= z)
+			break;
+	}
+	// Return the anisotropy value for the layer that resides at depth 'z'.
+	return (*it)->getAnisotropy();
+}
+
+
 
 void Medium::printGrid(const int numPhotons)
 {

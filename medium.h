@@ -21,10 +21,29 @@ public:
 	Medium();
 	~Medium();
 	
+	// Absorb energy from the photon at a given depth and store it in the grid.
 	void absorbEnergy(const double z, const double energy);
+
+	// Print the grid of the medium.
 	void printGrid(const int num_photons);
+
+	// Add a layer to the medium.
 	void addLayer(Layer *layer);
-	//Layer * getLayer();	
+
+	// Returns the absorption coefficient (mu_a) for a given depth (i.e. a layer).
+	double getLayerAbsorption(double depth);
+
+	// Returns the scattering coefficient (mu_s) for a given depth (i.e. a layer).
+	double getLayerScatter(double depth);
+
+	// Return the anisotropy ('g') value for a given depth (i.e. a layer).
+	double getAnisotropyFromDepth(double depth);
+
+	// Return layer from depth passed in.
+	Layer * getLayerFromDepth(double depth);
+
+
+
 		
 protected:
 	//double radial_size;	// maximum radial size of medium

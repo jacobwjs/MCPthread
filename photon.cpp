@@ -1,6 +1,7 @@
 
 #include "debug.h"
 #include "photon.h"
+#include "layer.h"
 
 
 
@@ -113,15 +114,17 @@ void Photon::hop()
 #ifdef DEBUG
 	cout << "Hopping...\n";
 #endif	
-	
+
 	double rnd = getRandNum();
 	if (rnd <= 0 || rnd > 1)	cout << "Error in random number\n";
 	
-	// FIXME: Should check at which depth the photon resides in the medium
-	//        (e.g. double mu_a = medium->getlayerAbsorption(z)), but hard coded values
-	//        are used for now, which assumes homogeneous single layer throughout. 
-	double mu_a = 1.0; // cm^-1
-	double mu_s = 0.0; // cm^-1
+	cout << "Before\n";
+	Layer *layer = medium->getLayerFromDepth(z);
+	cout << "After\n";
+
+	double mu_a = layer->getAbsorpCoeff();  // cm^-1
+	double mu_s = layer->getScatterCoeff(); // cm^-1
+
 	step = -log(rnd)/(mu_a	+ mu_s);
 	
 	// Update position of the photon.
@@ -138,9 +141,7 @@ void Photon::drop()
 	cout << "Dropping...\n";
 #endif	
 	
-	// FIXME:  Should return the albedo for the layer in which the photon is 
-	//			currently being propogated through. (e.g. double val = medium->getLayerAlbedo(z))
-	//		   For now assume single homogenous layer.
+	// FIXME: Should index into medium to get these values.
 	double mu_s = 0.0;
 	double mu_a = 1.0;
 	double albedo = mu_s / (mu_a + mu_s);
@@ -160,10 +161,9 @@ void Photon::spin()
 	cout << "Spinning...\n";
 #endif	
 	
-	// FIXME:  Should index into medium to find 'g' for given layer at this depth.
-	//		   e.g. double g = medium->getAnisotropy(z);
-	//		   Assuming static value now (ie single homogeneous layer).
-	double g = 0.90;
+
+	double g = medium->getAnisotropyFromDepth(z);
+
 	double rnd = getRandNum();
 	
 	if (g == 0.0) {

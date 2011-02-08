@@ -6,8 +6,8 @@
  *
  */
 
-/* FIXME:
- * ------
+/* FIXME: List of things to do
+ * -------------------------------------------
  * - Set default thread stack size
  * - Update printGrid to calculate fluences based on layers. 
  */
@@ -25,7 +25,7 @@
 using namespace std;
 
 const int MAX_THREADS = 33;
-const int MAX_PHOTONS = 10000000;
+const int MAX_PHOTONS = 10000;
 
 //#define DEBUG 1
 
