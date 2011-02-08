@@ -6,7 +6,7 @@
  *
  */
 
-/* TO DO:
+/* FIXME:
  * ------
  * - Set default thread stack size
  * - Update printGrid to calculate fluences based on layers. 
@@ -24,8 +24,8 @@
 
 using namespace std;
 
-const int MAX_THREADS = 11;
-const int MAX_PHOTONS = 50000000;
+const int MAX_THREADS = 33;
+const int MAX_PHOTONS = 10000000;
 
 //#define DEBUG 1
 
@@ -51,12 +51,12 @@ int main()
 	// Set attributes for the number of threads (i.e., Photons) and start their
 	// execution.
 	for (currPhoton = photons.begin(); currPhoton != photons.end(); ++currPhoton) {
-		// Set the layer the current Photon will be propogated through.
+		// Set the 'medium' the current Photon will be propagated through.
 		currPhoton->setMedium(tissue);	
 		
 		// In order to extract the highest level of concurrency we set each thread
 		// (i.e., Photon) to be executed a number of times that evenly distributes
-		// the work (i.e., propogation through medium).
+		// the work (i.e., propagation through medium).
 		currPhoton->setIterations(MAX_PHOTONS / MAX_THREADS);
 		
 		// Create the photon and execute hop, drop, and spin until it dies.

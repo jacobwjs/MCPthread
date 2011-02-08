@@ -17,7 +17,7 @@ all : mcmlpthread
 
 
 mcmlpthread: $(OBJS)
-	 $(CC) -o  $@ $(OBJS) $(CFLAGS) $(LIBS)
+	 $(CC) -O3 -o  $@ $(OBJS) $(CFLAGS) $(LIBS)
 
 
 clean::
